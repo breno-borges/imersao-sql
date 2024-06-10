@@ -71,13 +71,13 @@ order by
 select 
     l.* 
 from livros l
-where l.datapublicacao <= TO_DATE('1989-12-31', 'YYYY-MM-DD');
+where l.datapublicacao < TO_DATE('1900-01-01', 'YYYY-MM-DD');
 
 delete  
 from 
     livros 
 where
-    datapublicacao <= TO_DATE('1989-12-31', 'YYYY-MM-DD');
+    datapublicacao < TO_DATE('1900-01-01', 'YYYY-MM-DD');
     
 commit;
 
@@ -108,6 +108,18 @@ group by
     l.genero
 order by
     "Quantidade" desc;
+
+-- Correção da 4
+select
+    l.genero,
+    count(*) as "Quantidade",
+    min(l.datapublicacao) as "Mais Antigo",
+    max(datapublicacao) as "Mais Novo"
+from
+    livros l
+group by
+    l.genero
+order by 1;
 
 -- Resposta 5: A biblioteca recebeu uma nova coleção de livros: Faça a inserção dos registros, usando os IDs 24, 25, 26 e 27 respectivamente. Atente para o fato de que os livros devem ser
 inseridos em categorias já existentes;

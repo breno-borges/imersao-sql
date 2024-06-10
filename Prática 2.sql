@@ -101,11 +101,25 @@ insert into reservas (reserva_id, filial_id, nome_cliente, data_reserva, numero_
 values (11, 2, 'Jose das Dores', (select next_day(to_date('2024-02-12', 'YYYY-MM-DD'), 'SEXTA') from dual), 2);
 commit;
 
+--Correção
+insert into reservas (reserva_id, filial_id, nome_cliente, data_reserva, numero_pessoas) 
+values (11, 2, 'Jose das Dores', next_day(to_date('2024-02-12', 'YYYY-MM-DD'), 'SEXTA', 2);
+commit;
+
+
 -- Resposta 2: Devido a outro erro do sistema, parece que alguns chefs foram cadastrados com valores nulos no
 -- campo de especialidade. Faça um query que realize a contagem de quantos valores nulos existem
 -- na coluna especialidade da tabela chefs. Depois atualize esses registros para 'Brasileira';
 select 
     count(*) as "Quantidade de chefes sem especialidade" 
+from 
+    chefs c
+where
+    c.especialidade is null;
+
+-- Consulta feita na correção
+select 
+    count(nvl(c.especialidade, 0)) as "Quantidade de chefes sem especialidade" 
 from 
     chefs c
 where
@@ -148,6 +162,23 @@ where
 
 commit;
 
+-- Outras formas de fazer:
+update
+    reservas r
+set
+    r.data_reserva = add_months(r.data_reserva, 1)
+where
+    extract(month from r.data_reserva) = 2 and
+    r.filial_id = 3;
+
+update
+    reservas r
+set
+    r.data_reserva = r.data_reserva + interval '1' month
+where
+    extract(month from r.data_reserva) = 2 and
+    r.filial_id = 3;
+
 -- Resposta 5: Todas as filiais do restaurante estão abrindo uma nova frente de vendas via aplicativo. Para o
 -- cadastro do prato, entretanto, o tamanho máximo do texto para a miniatura deve ser de 25
 -- caracteres. Faça uma consulta SQL que retorne o nome do prato e a descrição, limitando a 25 o
@@ -157,6 +188,14 @@ select
     'O nome do prato é: ' || 
     c.nome_prato as "Nome do Prato",
     substr(c.descricao, 1, 25) as "Descricao"
+from 
+    cardapio c
+
+-- Correção
+select
+    'O nome do prato é: ' ||
+    substr(c.descricao, 1, 22) ||
+    '...' as "Descricao atualizada"
 from 
     cardapio c
 
